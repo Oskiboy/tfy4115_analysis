@@ -1,14 +1,40 @@
-import numpy as np
-import matplotlib.pyplot as plt
-from mpl_toolkits import mplot3d
-import glob
+import numpy as np                  #For data analysis
+import matplotlib.pyplot as plt     #For basic plotting
+from mpl_toolkits import mplot3d    #3D plotting tool for matplotlib
+import glob                         #For creating globs from our datapaths
 
+"""
+    Global variables contains the filenames, 
+    data, regression values and maxima points
+
+    files:
+        List of file paths to data files.
+
+    data:
+        array of three dimentional vectors with time, x and y points.
+
+    reg:
+        array of regression coefficients.
+        [a_0, a_1], corresponding to: f(t) = e^(a_1)*e^(a_0t)
+    maxima:
+        array with arrays of maxima points.
+"""
 files = []
 data = []
 reg = []
 maxima = []
 
 def importData(filename):
+    """
+        Using NumPys built in load function it loads the files into NumPy arrays.
+        Data format:
+        ### Start of file
+        mass_A
+        't'      'x'       'y'
+        t_0     x_0         y_0
+        ...
+        ### EOF ###
+    """
     try:
         data = np.loadtxt(filename, skiprows=2)
     except:
@@ -19,6 +45,15 @@ def importData(filename):
     return data
 
 def findMaxima(time, data):
+    """
+    By comparing a point x with the next and previous points, 
+    we get a crude extrema function
+    
+    @arg time is a vector of timestamps
+    @arg data is a vector of function values at the corresponding index in time.
+
+    returns an array of points[timestamp, maxima_value].
+    """
     maxima = []
     for i in range(2, (len(data)-2)):
         if (data[i] > data[i-1]) and (data[i]> data[i+1]):
@@ -27,7 +62,13 @@ def findMaxima(time, data):
     maxima = np.array(maxima).transpose()
     return maxima
 
+
 def plot3D(data):
+    """
+        Creates a 3D plot of the data passed to the function.
+
+        @arg data - This is a 3 dimentional vector on the form [time, x, y]
+    """
     fig = plt.figure()
     ax = plt.axes(projection='3d')
     zline = data[2]
@@ -40,6 +81,11 @@ def plot3D(data):
     plt.show()
 
 def plot2D(data):
+    """
+        Creates a 2D plot based on the data passed to the function
+
+        @arg data - This is a 2D array on the form [x, y]
+    """
     plt.figure()
     plt.plot(data[0], data[1])
     plt.xlabel('t')
@@ -47,6 +93,12 @@ def plot2D(data):
     plt.show()
 
 def evalPol(reg, time):
+    """
+        Evaluates the regression with coefficients reg[0] and reg[1] on all points in the array time
+
+        @reg - Has the exponential regression coefficients. f(t) = exp(reg[1]) * exp(reg[0]*t)
+        @time - Contains all the points where f should be evaluated.
+    """
     #print reg
     pol = []
     for i in time:
@@ -55,20 +107,23 @@ def evalPol(reg, time):
     return pol
 
 def main():
-    #Extract all the data filepaths
+    #Load all datafile names into files
     for i in glob.glob("data/*.data"):
         files.append(i)
 
+    #Import all the data from all our data files.
     for i in files:
-        #Gathers all the data from all the files.
         data.append(importData(i))
     
+    #Find all the maxima points of our datasets
     for i in data:
         maxima.append(findMaxima(i[0], i[2]))
 
+    #Do a exponential regression on all the maxima datapoints.
     for i in maxima:
         reg.append(np.polyfit(i[0], np.log(i[1]), 1, w = np.sqrt(i[1])))
 
+    #Create mean value coefficients for our energy loss curve.
     a = 0
     b = 0
     for i in reg:
@@ -77,16 +132,16 @@ def main():
 
     super_reg = [a / len(reg), b / len(reg)]
     print "Super regression: ", super_reg
+
    
+    #Plot the first dataset, its maxima and the regression exponential function created for it.
     plt.plot(maxima[0][0], maxima[0][1], 'ro', evalPol(reg[0], data[0][0])[0], evalPol(reg[0], data[0][0])[1])
     plt.plot(data[0][0], data[0][2])
     plt.show()
-
+    
+    #Plots our mean valued exponential regression.
     plt.plot(evalPol(super_reg, data[0][0])[0], evalPol(super_reg, data[0][0])[1])
     plt.show()
-
-
-
 
     return 0
 
