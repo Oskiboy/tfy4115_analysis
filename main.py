@@ -1,44 +1,92 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from mpl_toolkits import mplot3d
+import glob
 
+files = []
+data = []
+reg = []
+maxima = []
 
-def importData(filename, dim):
-    # Creates a list of datapoints from a tab separated file.
-    # All the data is (t, x, y)
-    f = open(filename)
-    data = ([[] for _ in range(dim)])
-    for i in f:
-        #Data is tab separated list
-        temp = i.split("\t")
+def importData(filename):
+    try:
+        data = np.loadtxt(filename, skiprows=2)
+    except:
+        print "Could not load: ", filename
+        return []
+    data = data.transpose()
 
-        #Remove a trailing newline
-        temp[len(temp) - 1] = temp[len(temp) - 1][0:-1]
-        
-        #Convert to float if possible
-        for j in range(dim):
-            try:
-                data[j].append(float(temp[j]))
-            except ValueError:
-                continue
-    data = np.array(data)
     return data
-        
-def plot2DData(data):
-    plt.plot(data[0], data[1])
-    plt.axis([0, max(data[0]), min(data[1]), max(data[1])])
+
+def findMaxima(time, data):
+    maxima = []
+    for i in range(2, (len(data)-2)):
+        if (data[i] > data[i-1]) and (data[i]> data[i+1]):
+            if (data[i] > data[i -2]) and (data[i] > data[i+2]):
+                maxima.append([time[i],data[i]])
+    maxima = np.array(maxima).transpose()
+    return maxima
+
+def plot3D(data):
+    fig = plt.figure()
+    ax = plt.axes(projection='3d')
+    zline = data[2]
+    xline = data[1]
+    yline = data[0]
+    ax.set_zlabel('t')
+    ax.set_xlabel('x')
+    ax.set_ylabel('y')
+    ax.plot3D(xline, yline, zline, 'gray')
     plt.show()
-    
-def plot3DData(data):
-    plt.figure(1)
-    plt.subplot(211)
+
+def plot2D(data):
+    plt.figure()
     plt.plot(data[0], data[1])
-    plt.subplot(212)
-    plt.plot(data[0], data[2])
+    plt.xlabel('t')
+    plt.ylabel('f(t)')
     plt.show()
+
+def evalPol(reg, time):
+    #print reg
+    pol = []
+    for i in time:
+        pol.append([i, np.exp(reg[1]) * np.exp(reg[0] * i)])
+    pol = np.array(pol).transpose()
+    return pol
 
 def main():
-    B = importData("data/video1", 3)
-    plot3DData(B)
+    #Extract all the data filepaths
+    for i in glob.glob("data/*.data"):
+        files.append(i)
+
+    for i in files:
+        #Gathers all the data from all the files.
+        data.append(importData(i))
+    
+    for i in data:
+        maxima.append(findMaxima(i[0], i[2]))
+
+    for i in maxima:
+        reg.append(np.polyfit(i[0], np.log(i[1]), 1, w = np.sqrt(i[1])))
+
+    a = 0
+    b = 0
+    for i in reg:
+        a += i[0]
+        b += i[1]
+
+    super_reg = [a / len(reg), b / len(reg)]
+    print "Super regression: ", super_reg
+   
+    plt.plot(maxima[0][0], maxima[0][1], 'ro', evalPol(reg[0], data[0][0])[0], evalPol(reg[0], data[0][0])[1])
+    plt.plot(data[0][0], data[0][2])
+    plt.show()
+
+    plt.plot(evalPol(super_reg, data[0][0])[0], evalPol(super_reg, data[0][0])[1])
+    plt.show()
+
+
+
 
     return 0
 
