@@ -110,10 +110,12 @@ def main():
     #Load all datafile names into files
     for i in glob.glob("data/*.data"):
         files.append(i)
+        print "File loaded: ", i
 
     #Import all the data from all our data files.
     for i in files:
         data.append(importData(i))
+        print "Data imported from: ", i
     
     #Find all the maxima points of our datasets
     for i in data:
@@ -123,24 +125,13 @@ def main():
     for i in maxima:
         reg.append(np.polyfit(i[0], np.log(i[1]), 1, w = np.sqrt(i[1])))
 
-    #Create mean value coefficients for our energy loss curve.
-    a = 0
-    b = 0
     for i in reg:
-        a += i[0]
-        b += i[1]
+        print np.exp(i[1]),"* exp(",i[0],"* t)"
 
-    super_reg = [a / len(reg), b / len(reg)]
-    print "Super regression: ", super_reg
-
-   
+       
     #Plot the first dataset, its maxima and the regression exponential function created for it.
-    plt.plot(maxima[0][0], maxima[0][1], 'ro', evalPol(reg[0], data[0][0])[0], evalPol(reg[0], data[0][0])[1])
-    plt.plot(data[0][0], data[0][2])
-    plt.show()
-    
-    #Plots our mean valued exponential regression.
-    plt.plot(evalPol(super_reg, data[0][0])[0], evalPol(super_reg, data[0][0])[1])
+    plt.plot(maxima[9][0], maxima[9][1], 'ro', evalPol(reg[9], data[9][0])[0], evalPol(reg[9], data[9][0])[1])
+    plt.plot(data[9][0], data[9][2])
     plt.show()
 
     return 0
