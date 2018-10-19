@@ -3,14 +3,14 @@
     <property name="semantic_version" type="string">5.0.6</property>
     <property name="width" type="double">1280.0</property>
     <property name="height" type="double">720.0</property>
-    <property name="magnification" type="double">3.1748021039363987</property>
-    <property name="center_x" type="int">2215</property>
-    <property name="center_y" type="int">1747</property>
+    <property name="magnification" type="double">2.519842099789746</property>
+    <property name="center_x" type="int">2136</property>
+    <property name="center_y" type="int">1371</property>
     <property name="videoclip" type="object">
     <object class="org.opensourcephysics.media.core.VideoClip">
         <property name="video" type="object">
         <object class="org.opensourcephysics.media.xuggle.XuggleVideo">
-            <property name="path" type="string">video12.MP4</property>
+            <property name="path" type="string">../../opptak/video12.MP4</property>
         </object>
         </property>
         <property name="video_framecount" type="int">4992</property>
@@ -41,8 +41,8 @@
                 <property name="xorigin" type="double">648.9859594383776</property>
                 <property name="yorigin" type="double">618.5959438377536</property>
                 <property name="angle" type="double">0.0</property>
-                <property name="xscale" type="double">0.9972348916339459</property>
-                <property name="yscale" type="double">0.9972348916339459</property>
+                <property name="xscale" type="double">793.5787637382899</property>
+                <property name="yscale" type="double">793.5787637382899</property>
             </object>
             </property>
         </property>
@@ -97,7 +97,7 @@
                 </property>
             </property>
             <property name="worldlengths" type="array" class="[Ljava.lang.Double;">
-                <property name="[0]" type="double">795.7791794047938</property>
+                <property name="[0]" type="double">1.0</property>
             </property>
         </object>
         </property>
@@ -29500,9 +29500,9 @@
         </object>
         </property>
     </property>
-    <property name="selectedtrack" type="string">mass A</property>
+    <property name="selectedtrack" type="string">calibration stick A</property>
     <property name="dividers" type="array" class="[D">
-        <property name="array" type="string">{0.7015250544662309,0.5,1.0,0.34967320261437906}</property>
+        <property name="array" type="string">{0.8366013071895425,0.4989339019189765,1.0,0.1906318082788671}</property>
     </property>
     <property name="selected_views" type="array" class="[Ljava.lang.String;">
         <property name="[0]" type="string">Plot View</property>
@@ -29523,6 +29523,4 @@
         <property name="stretch_acceleration" type="int">1</property>
     </object>
     </property>
-    <property name="track_control_x" type="int">5</property>
-    <property name="track_control_y" type="int">112</property>
 </object>

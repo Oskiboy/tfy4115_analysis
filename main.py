@@ -106,6 +106,47 @@ def evalPol(reg, time):
     pol = np.array(pol).transpose()
     return pol
 
+def plotAll():
+    plt.figure(0)
+    plt.plot(1)
+    for i in range(0, len(maxima)):
+        plt.subplot(4, 3, i+1)
+        plt.plot(maxima[i][0], maxima[i][1], 'ro', evalPol(reg[i], data[i][0])[0], evalPol(reg[i], data[i][0])[1])
+        plt.plot(data[i][0], data[i][2])
+        plt.grid(True)
+        plt.xlabel('time')
+        plt.ylabel('height')
+    plt.show()
+
+def plotDataset(dataset_index):
+    plot_title = "Dataset number " + str(dataset_index + 1)
+    plt.figure(2)
+    set_maxima  = maxima[dataset_index]
+    set_pol     = evalPol(reg[dataset_index], data[dataset_index][0])
+    raw_data    = data[dataset_index]
+    plt.plot(set_maxima[0], set_maxima[1], 'ro', set_pol[0], set_pol[1])
+    plt.plot(raw_data[0], raw_data[2])
+    plt.xlabel("time [s]")
+    plt.ylabel("height [m]")
+    plt.title(plot_title)
+    plt.grid(True)
+    plt.show()
+
+def plotMeanRegression():
+    time = data[0][0]
+    mean_value = evalPol(reg[0], time)[1]
+
+    for i in range(1, len(reg)):
+        mean_value += evalPol(reg[i], time)[1]
+    
+    plt.figure(3)
+    plt.plot(time, mean_value)
+    plt.xlabel('time[s]')
+    plt.ylabel('height[m]')
+    plt.grid(True)
+    plt.title("Mean regression plot")
+    plt.show()
+
 def main():
     #Load all datafile names into files
     for i in glob.glob("data/*.data"):
@@ -125,14 +166,12 @@ def main():
     for i in maxima:
         reg.append(np.polyfit(i[0], np.log(i[1]), 1, w = np.sqrt(i[1])))
 
+    print "Ae^(-at):"
     for i in reg:
-        print np.exp(i[1]),"* exp(",i[0],"* t)"
-
-       
-    #Plot the first dataset, its maxima and the regression exponential function created for it.
-    plt.plot(maxima[9][0], maxima[9][1], 'ro', evalPol(reg[9], data[9][0])[0], evalPol(reg[9], data[9][0])[1])
-    plt.plot(data[9][0], data[9][2])
-    plt.show()
+        print "A =", np.exp(i[1]),"a =",i[0]
+    #plotAll()
+    plotDataset(7)
+    #plotMeanRegression()
 
     return 0
 
