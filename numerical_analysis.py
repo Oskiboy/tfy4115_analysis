@@ -83,8 +83,8 @@ def main():
     plt.figure()
     #plt.subplot(221)
     plt.plot(t, y, linewidth=4.0)
-    plt.ylabel(r'$h(t)$', fontsize=26)
-    plt.xlabel(r'$t$', fontsize=26)
+    plt.ylabel(r'$h(t)[m]$', fontsize=26)
+    plt.xlabel(r'$t[s]$', fontsize=26)
     plt.grid()
     """
     plt.subplot(222)
