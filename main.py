@@ -124,10 +124,10 @@ def plotDataset(dataset_index):
     set_maxima  = maxima[dataset_index]
     set_pol     = evalPol(reg[dataset_index], data[dataset_index][0])
     raw_data    = data[dataset_index]
-    plt.plot(set_maxima[0], set_maxima[1], 'ro', set_pol[0], set_pol[1])
-    plt.plot(raw_data[0], raw_data[2])
-    plt.xlabel("time [s]")
-    plt.ylabel("height [m]")
+    plt.plot(raw_data[0], raw_data[2], linewidth=3.0)
+    plt.plot(set_pol[0], set_pol[1], set_maxima[0], set_maxima[1], 'ro', linewidth=4.0)
+    plt.xlabel("$time [s]$", fontsize=30)
+    plt.ylabel("$height [m]$", fontsize=30)
     plt.title(plot_title)
     plt.grid(True)
     plt.show()
@@ -140,11 +140,11 @@ def plotMeanRegression():
         mean_value += evalPol(reg[i], time)[1]
     
     plt.figure(3)
-    plt.plot(time, mean_value)
-    plt.xlabel('time[s]')
-    plt.ylabel('height[m]')
+    plt.plot(time, mean_value, linewidth=3.0)
+    plt.xlabel('$time[s]$', fontsize=24)
+    plt.ylabel('$height[m]$', fontsize=24)
     plt.grid(True)
-    plt.title("Mean regression plot")
+    #plt.title("Mean regression plot")
     plt.show()
 
 def main():
@@ -171,9 +171,8 @@ def main():
         print "A =", np.exp(i[1]),"a =",i[0]
     #plotAll()
     plotDataset(7)
-    #plotMeanRegression()
+    plotMeanRegression()
 
     return 0
 
-if __name__ == "__main__":
-    main()
+main()
