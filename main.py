@@ -62,36 +62,6 @@ def findMaxima(time, data):
     maxima = np.array(maxima).transpose()
     return maxima
 
-
-def plot3D(data):
-    """
-        Creates a 3D plot of the data passed to the function.
-
-        @arg data - This is a 3 dimentional vector on the form [time, x, y]
-    """
-    fig = plt.figure()
-    ax = plt.axes(projection='3d')
-    zline = data[2]
-    xline = data[1]
-    yline = data[0]
-    ax.set_zlabel('t')
-    ax.set_xlabel('x')
-    ax.set_ylabel('y')
-    ax.plot3D(xline, yline, zline, 'gray')
-    plt.show()
-
-def plot2D(data):
-    """
-        Creates a 2D plot based on the data passed to the function
-
-        @arg data - This is a 2D array on the form [x, y]
-    """
-    plt.figure()
-    plt.plot(data[0], data[1])
-    plt.xlabel('t')
-    plt.ylabel('f(t)')
-    plt.show()
-
 def evalPol(reg, time):
     """
         Evaluates the regression with coefficients reg[0] and reg[1] on all points in the array time
@@ -106,31 +76,26 @@ def evalPol(reg, time):
     pol = np.array(pol).transpose()
     return pol
 
-def plotAll():
-    plt.figure(0)
-    plt.plot(1)
-    for i in range(0, len(maxima)):
-        plt.subplot(4, 3, i+1)
-        plt.plot(maxima[i][0], maxima[i][1], 'ro', evalPol(reg[i], data[i][0])[0], evalPol(reg[i], data[i][0])[1])
-        plt.plot(data[i][0], data[i][2])
-        plt.grid(True)
-        plt.xlabel('time')
-        plt.ylabel('height')
-    plt.show()
-
 def plotDataset(dataset_index):
+    """
+    This plot acts up
+    """
     plot_title = "Dataset number " + str(dataset_index + 1)
-    plt.figure(2)
+    my_fig = plt.figure(2)
+    
     set_maxima  = maxima[dataset_index]
     set_pol     = evalPol(reg[dataset_index], data[dataset_index][0])
     raw_data    = data[dataset_index]
-    plt.plot(raw_data[0], raw_data[2], linewidth=3.0)
+
+    plt.plot(raw_data[0], raw_data[2], 'g',linewidth=1.5)
     plt.plot(set_pol[0], set_pol[1], set_maxima[0], set_maxima[1], 'ro', linewidth=4.0)
-    plt.xlabel("$time [s]$", fontsize=30)
-    plt.ylabel("$height [m]$", fontsize=30)
+    plt.xlabel("time [s]")
+    plt.ylabel("height [m]")
     plt.title(plot_title)
     plt.grid(True)
-    plt.show()
+    plt.rcParams.update({'font.size': 30}) 
+    #plt.show()
+    my_fig.savefig('dataset.eps', format='eps')
 
 def plotMeanRegression():
     time = data[0][0]
@@ -139,24 +104,27 @@ def plotMeanRegression():
     for i in range(1, len(reg)):
         mean_value += evalPol(reg[i], time)[1]
     
-    plt.figure(3)
-    plt.plot(time, mean_value, linewidth=3.0)
-    plt.xlabel('$time[s]$', fontsize=24)
-    plt.ylabel('$height[m]$', fontsize=24)
+    fig = plt.figure(3)
+    plt.plot(time, mean_value, linewidth=4.0)
+    plt.xlabel('time [s]', fontsize=30)
+    plt.ylabel('height [m]', fontsize=30)
     plt.grid(True)
     #plt.title("Mean regression plot")
-    plt.show()
+    plt.rcParams.update({'font.size': 30})
+    fig.tight_layout() 
+    #plt.show()
+    fig.savefig('mean_regression.eps', format='eps')
 
 def main():
     #Load all datafile names into files
     for i in glob.glob("data/*.data"):
         files.append(i)
-        print "File loaded: ", i
+        #print "File loaded: ", i
 
     #Import all the data from all our data files.
     for i in files:
         data.append(importData(i))
-        print "Data imported from: ", i
+        #print "Data imported from: ", i
     
     #Find all the maxima points of our datasets
     for i in data:
@@ -165,13 +133,15 @@ def main():
     #Do a exponential regression on all the maxima datapoints.
     for i in maxima:
         reg.append(np.polyfit(i[0], np.log(i[1]), 1, w = np.sqrt(i[1])))
-
+    """
     print "Ae^(-at):"
     for i in reg:
         print "A =", np.exp(i[1]),"a =",i[0]
+    """
     #plotAll()
     plotDataset(7)
     plotMeanRegression()
+    plt.show()
 
     return 0
 
